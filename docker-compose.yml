@@ -1,0 +1,36 @@
+# Compose file reference: https://docs.docker.com/compose/compose-file/
+version: "2"
+services:
+  nginx:
+    image: cs/nginx:ci
+    ports:
+      - "80:80"
+      - "8090:8090"
+      - "443:443"
+    links:
+      - php
+    volumes_from:
+      - php
+  php:
+    image: php:composer
+    volumes:
+      - ./www:/data1/www
+    privileged: true
+  mysql:
+    image: cs/mysql
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./data/mysql:/var/lib/mysql  
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+  redis:
+    image: cs/redis
+    ports:
+      - "6379:6379"
+#  apache:
+#    image: registry.cn-qingdao.aliyuncs.com/chs/chlw:apachephp5
+#    ports:
+#      - "8090:80"
+#    volumes:
+#      - ./www/apache_web:/var/www
