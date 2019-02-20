@@ -15,11 +15,5 @@ services:
 # 此处为自定义webservice配置，用于使用本地webservice
 #    extra_hosts:
 #        - "nfshost:10.101.9.216"
-#        - "webservice.enterprisecms.a.guanaitong.dev:192.168.99.100"
-#        - "benefits2.services.dev.ofc:192.168.99.100"
-#        - "webservice.ehome.a.guanaitong.dev:192.168.99.100"
-#        - "emailnotice.services.dev.ofc:192.168.99.100"
-#        - "enterprisenotice.services.dev.ofc:192.168.99.100"
-#        - "promotion.services.dev.ofc:192.168.99.100"
 #        - "messagepush.services.dev.ofc:192.168.99.100"
         
