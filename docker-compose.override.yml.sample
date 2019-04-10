@@ -1,0 +1,11 @@
+version: '2'
+services:
+  nginx:  
+    volumes:
+      - ./local/nginx/my.conf:/etc/nginx/conf.d/my.conf
+      - ./local/nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./local/ca/cert/:/etc/nginx/ca/cert/:rw
+  #mysql:
+  #  volumes:
+  #    #- ./data/mysql:/var/lib/mysql:rw
+  #    - ./data/mysql57:/var/lib/mysql:rw
