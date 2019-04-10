@@ -1,36 +1,53 @@
-# Compose file reference: https://docs.docker.com/compose/compose-file/
 version: "2"
 services:
   nginx:
-    image: cs/nginx:ci
+    image: registry.cn-qingdao.aliyuncs.com/chs/chlw:nginx
     ports:
       - "80:80"
-      - "8090:8090"
       - "443:443"
-    links:
+      - "8888:8888"
+    external_links:
       - php
+      - redis
     volumes_from:
       - php
   php:
-    image: php:composer
+    #image: registry.cn-hangzhou.aliyuncs.com/chs/php:alpine-workman
+    image: registry.cn-hangzhou.aliyuncs.com/chs/php:swoole_git 
+    ports:
+      - "9000: "
     volumes:
       - ./www:/data1/www
     privileged: true
-  mysql:
-    image: cs/mysql
-    ports:
-      - "3306:3306"
-    volumes:
-      - ./data/mysql:/var/lib/mysql  
-    environment:
-      MYSQL_ROOT_PASSWORD: 123456
   redis:
-    image: cs/redis
+    image: registry.cn-qingdao.aliyuncs.com/chs/chlw:redis
     ports:
       - "6379:6379"
-#  apache:
-#    image: registry.cn-qingdao.aliyuncs.com/chs/chlw:apachephp5
-#    ports:
-#      - "8090:80"
-#    volumes:
-#      - ./www/apache_web:/var/www
+  beanstalkd:
+    image: registry.cn-qingdao.aliyuncs.com/chs/chlw:beanstalkd
+    ports:
+      - "11300:11300"
+  elasticsearch:
+    image: elasticsearch:5.6.7
+    environment:
+      - cluster.name=elasticsearch-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms500m -Xmx500m"
+    volumes:
+      - ./data/elastic/data:/usr/share/elasticsearch/data
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    ports:
+      - 9200:9200
+  mysql:
+    #image: registry.cn-qingdao.aliyuncs.com/chs/chlw:mysql_shanghai
+    image: mysql:5.7
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: 1qaz2wsx
