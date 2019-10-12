@@ -1,3 +1,6 @@
+
+
+```yml
 Compose和Docker兼容性：
   Compose 文件格式有3个版本,分别为1, 2.x 和 3.x
   目前主流的为 3.x 其支持 docker 1.13.0 及其以上的版本
@@ -267,3 +270,36 @@ networks          # 定义 networks 信息
             subnet                # CIDR格式的子网，表示该网络的网段
     external              # 外部网络, 如果设置为 true 则 docker-compose up 不会尝试创建它, 如果它不存在则引发错误
     name                  # v3.5 以上版本, 为此网络设置名称
+```
+
+
+文件格式示例：
+    
+
+```yml
+文件格式示例：
+    version: "3"
+    services:
+      redis:
+        image: redis:alpine
+        ports:
+          - "6379"
+        networks:
+          - frontend
+        deploy:
+          replicas: 2
+          update_config:
+            parallelism: 2
+            delay: 10s
+          restart_policy:
+            condition: on-failure
+      db:
+        image: postgres:9.4
+        volumes:
+          - db-data:/var/lib/postgresql/data
+        networks:
+          - backend
+        deploy:
+          placement:
+            constraints: [node.role == manager]
+```
