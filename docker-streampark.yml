@@ -46,8 +46,7 @@ services:
     networks:
       streampark-net:
         ipv4_address: 172.20.20.4
-
-
+        
   mysql11:
     image: mysql:8.1
     restart: always
@@ -99,6 +98,40 @@ services:
       streampark-net:
         ipv4_address: 172.20.20.6
 
+
+  metastore:
+    # 仅在 apache/hive:4.0.0-beta-1 基础上添加了mysql驱动
+    image: localhost/hive4:custom
+    depends_on:
+      - mysql11
+    ports:
+      - '9083:9083'   
+    privileged: true
+    environment:
+      SERVICE_NAME: metastore
+      DB_DRIVER: mysql
+      SERVICE_OPTS: "-Djavax.jdo.option.ConnectionDriverName=com.mysql.cj.jdbc.Driver -Djavax.jdo.option.ConnectionURL=jdbc:mysql://mysql11:3306/metastore?allowPublicKeyRetrieval=true&useSSL=false -Djavax.jdo.option.ConnectionUserName=root -Djavax.jdo.option.ConnectionPassword=root"
+    networks:
+      streampark-net:
+        ipv4_address: 172.20.20.7
+  hive4:
+    image: apache/hive:4.0.0-beta-1
+    # restart: always
+    ports:
+      - '10010:10000'
+      - '10012:10002'
+    depends_on:
+      - metastore
+    privileged: true
+    environment:
+      SERVICE_NAME: hiveserver2
+      SERVICE_OPTS: "-Dhive.metastore.uris=thrift://metastore:9083"
+      S_RESUME: true
+    volumes:
+      - hivev:/opt/hive/data/warehouse
+    networks:
+      streampark-net:
+        ipv4_address: 172.20.20.8
 networks:
   streampark-net:
     ipam:
